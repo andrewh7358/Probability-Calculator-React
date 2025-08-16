@@ -12,6 +12,8 @@ Calculate the chance of `r` successes in `n` events at probability `p`. Options 
 
 Example: `p = 0.5`, `n = 10`, `r = 5`
 
+<img src='./Screenshot.png' alt='Screenshot' width='600'/>
+
 ## How to run
 
 In the project directory, run `npm install` then `npm start`.

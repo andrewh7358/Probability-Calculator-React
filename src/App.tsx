@@ -1,14 +1,15 @@
 import React, { FormEvent, useState } from 'react'
 import { calculate } from './calculate'
+import { Form } from './Form'
 import './styles.css'
 
-interface Params {
+export interface Params {
   p: string
   n: string
   r: string
 }
 
-type Mode = 'atLeast' | 'exactly' | 'atMost'
+export type Mode = 'atLeast' | 'exactly' | 'atMost'
 
 const modeMap = {
   'atLeast': 'at least',
@@ -16,14 +17,12 @@ const modeMap = {
   'atMost': 'at most'
 }
 
-const App = () => {
-  // p: probability, n: number events, r: number successes
+export const App = () => {
+  // p: probability, n: number of events, r: number of successes
   const [params, setParams] = useState({ p: '0.5', n: '10', r: '5' } as Params)
   const [mode, setMode] = useState('atLeast' as Mode)
   const [output, setOutput] = useState('')
   const [history, setHistory] = useState([] as string[])
-
-  const historyList = history.map((v, i) => <h2 key={'hist' + i}>{v}</h2>)
 
   const onParamChange = (e: FormEvent) => {
     const { name, value } = e.target as HTMLInputElement
@@ -35,8 +34,9 @@ const App = () => {
     setMode(value as Mode)
   }
 
-  const onSubmit = (e: FormEvent, params: Params) => {
+  const onSubmit = (e: FormEvent) => {
     e.preventDefault()
+
     const p = Number(params.p)
     const n = Number(params.n)
     const r = Number(params.r)
@@ -57,7 +57,6 @@ const App = () => {
     }
 
     let chance
-
     if (mode === 'atLeast') {
       // 1 - P(r - 1) - ... - P(0)
       chance = 1
@@ -67,8 +66,7 @@ const App = () => {
         chance -= calculate(p, n, curr)
         curr -= 1
       }
-    }
-    else if (mode === 'exactly') {
+    } else if (mode === 'exactly') {
       // P(r)
       chance = calculate(p, n, r)
     } else {
@@ -82,59 +80,29 @@ const App = () => {
       }
     }
 
-    // remove -0 as output
+    // remove -0 as output and standardize
     chance = chance === 0 ? 0 : chance * 100
     const chanceOutput = Number(chance.toFixed(4))
-    const isExact = chanceOutput === chance
-    const modeOutput = modeMap[mode]
+    const modeText = modeMap[mode]
     const pOutput = Number((p * 100).toFixed(4))
     const nPlural = n === 1 ? 'event' : 'events'
     const rPlural = r === 1 ? 'success' : 'successes'
 
     setHistory([output].concat(history).slice(0, 5))
-    setOutput(`${isExact ? '': 'about '}${chanceOutput}% chance of ${modeOutput} ${r} ${rPlural} in ${n} ${nPlural} at ${pOutput}% probability`)
+    setOutput(`${chanceOutput}% chance of ${modeText} ${r} ${rPlural} in ${n} ${nPlural} at ${pOutput}% probability`)
   }
+
+  const historyList = history.map((item, index) => <h2 key={'hist' + index}>{item}</h2>)
 
   return (
     <>
-      <h1>Calculate the chance of r successes in n events at probability p</h1>
-      <form onSubmit={(e) => onSubmit(e, params)}>
-        <label>
-          p:
-          <input type='text' name={'p'} value={params.p} onChange={onParamChange}/>
-        </label>
-        <br />
-        <label>
-          n:
-          <input type='number' name={'n'} value={params.n} onChange={onParamChange}/>
-        </label>
-        <br />
-        <label>
-          r:
-          <input type='number' name={'r'} value={params.r} onChange={onParamChange}/>
-        </label>
-        <br />
-        <label>
-          <input type='radio' value='atLeast' checked={mode === 'atLeast'} onChange={onModeChange} />
-          At Least
-        </label>
-        <label>
-          <input type='radio' value='exactly' checked={mode === 'exactly'} onChange={onModeChange} />
-          Exactly
-        </label>
-        <label>
-          <input type='radio' value='atMost' checked={mode === 'atMost'} onChange={onModeChange} />
-          At Most
-        </label>
-        <br />
-        <button type='submit'>Calculate</button>
-      </form>
-      <h1>{output}</h1>
+      <h1>Probability Calculator</h1>
+      <div className='title'>Calculate the chance of r successes in n events at probability p</div>
+      <Form params={params} mode={mode} onSubmit={onSubmit} onParamChange={onParamChange} onModeChange={onModeChange} />
+      <h2>{output}</h2>
       <hr />
-      <h1>History</h1>
+      <h2>History</h2>
       {historyList}
     </>
   )
 }
-
-export default App

@@ -1,4 +1,19 @@
+body {
+  font-family: Arial, sans-serif;
+}
+
+h1 {
+  margin-bottom: unset;
+}
+
+.title {
+  margin: 4px 0px;
+}
+
 input {
-  margin-left: 4px;
-  margin-bottom: 8px;
+  margin: 4px 0px;
+}
+
+button {
+  margin-top: 8px;
 }

@@ -12,7 +12,7 @@ Calculate the chance of `r` successes in `n` events at probability `p`. Options 
 
 Example: `p = 0.5`, `n = 10`, `r = 5`
 
-<img src='./screenshot.png' alt='screenshot' width='600px' />
+<img src='./Screenshot.png' alt='Screenshot' width='600px' />
 
 ## How to run
 
